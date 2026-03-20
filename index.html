@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用數據說話：我的生活量化研究 🚀</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 for awesome popups (No boring alerts) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .btn-game {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            top: 0;
+        }
+        .btn-game:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .btn-game:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .option-btn {
+            border: 2px solid transparent;
+        }
+        .option-btn:hover {
+            border-color: #60a5fa;
+            background-color: #eff6ff;
+        }
+        .level-card.locked {
+            filter: grayscale(100%);
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .level-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        /* 簡單的浮動動畫 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased p-4 md:p-8 flex items-center justify-center">
+
+    <!-- 主容器 -->
+    <div id="app" class="w-full max-w-4xl mx-auto">
+        
+        <!-- ==================== 1. 登入畫面 ==================== -->
+        <div id="screen-login" class="glass-card rounded-3xl p-8 md:p-12 text-center transform transition-all duration-500">
+            <div class="mb-6 floating inline-block">
+                <i data-lucide="rocket" class="w-20 h-20 text-blue-500 mx-auto"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                用數據說話
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 font-bold">我的生活量化研究專題 📊</p>
+            
+            <div class="max-w-md mx-auto space-y-5 text-left">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">🏫 班級</label>
+                    <select id="login-class" class="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-lg">
+                        <option value="">請選擇班級</option>
+                        <option value="901">901班</option>
+                        <option value="902">902班</option>
+                        <option value="903">903班</option>
+                        <option value="904">904班</option>
+                        <option value="905">905班</option>
+                        <option value="906">906班</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">🪑 座號</label>
+                    <input type="number" id="login-seat" min="1" max="50" placeholder="輸入座號 (1-50)" class="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">👤 姓名</label>
+                    <input type="text" id="login-name" placeholder="輸入你的名字" class="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-lg">
+                </div>
+                
+                <button onclick="login()" class="btn-game w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg flex justify-center items-center gap-2">
+                    <i data-lucide="gamepad-2"></i> 開始挑戰
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== 2. 學習地圖畫面 ==================== -->
+        <div id="screen-map" class="hidden">
+            <!-- 頂部資訊列 -->
+            <div class="glass-card rounded-2xl p-4 mb-6 flex justify-between items-center flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-100 p-2 rounded-full"><i data-lucide="user" class="text-blue-600"></i></div>
+                    <div>
+                        <div id="player-info" class="font-bold text-lg text-gray-800">901 01 王小明</div>
+                        <div class="text-sm text-gray-500">學習進度</div>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-center bg-white/50 px-4 py-2 rounded-xl">
+                        <div class="text-xs font-bold text-gray-500">目前總分</div>
+                        <div id="player-score" class="text-2xl font-black text-blue-600">0</div>
+                    </div>
+                    <button onclick="showLeaderboard()" class="btn-game bg-yellow-400 text-yellow-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2 shadow-sm">
+                        <i data-lucide="trophy" class="w-5 h-5"></i> 結算成績
+                    </button>
+                </div>
+            </div>
+
+            <!-- 關卡列表 -->
+            <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
+                <i data-lucide="map" class="text-purple-600"></i> 專題任務地圖
+            </h2>
+            <div id="level-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 關卡由 JS 動態生成 -->
+            </div>
+        </div>
+
+        <!-- ==================== 3. 教學卡片畫面 ==================== -->
+        <div id="screen-teach" class="hidden glass-card rounded-3xl p-8 max-w-2xl mx-auto relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full -z-10 opacity-50"></div>
+            <button onclick="switchScreen('screen-map')" class="mb-4 text-gray-500 hover:text-gray-800 flex items-center gap-1 font-bold">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> 返回地圖
+            </button>
+            
+            <div class="text-center mb-6">
+                <div id="teach-icon" class="text-6xl mb-4 floating">📚</div>
+                <h2 id="teach-title" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">關卡名稱</h2>
+            </div>
+            
+            <div class="bg-white/80 p-6 rounded-2xl shadow-inner mb-8 border border-blue-50">
+                <h3 class="font-bold text-lg mb-3 text-blue-800 flex items-center gap-2">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-yellow-500"></i> 任務核心概念
+                </h3>
+                <ul id="teach-content" class="space-y-3 text-gray-700 font-medium leading-relaxed">
+                    <!-- 教學內容由 JS 填入 -->
+                </ul>
+            </div>
+            
+            <button onclick="startQuiz()" class="btn-game w-full bg-gradient-to-r from-green-400 to-emerald-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg flex justify-center items-center gap-2">
+                <i data-lucide="play-circle"></i> 開始測驗 (5題)
+            </button>
+        </div>
+
+        <!-- ==================== 4. 測驗畫面 ==================== -->
+        <div id="screen-quiz" class="hidden max-w-2xl mx-auto">
+            <!-- 進度條 -->
+            <div class="glass-card rounded-2xl p-4 mb-6 flex justify-between items-center">
+                <div class="font-bold text-lg text-blue-800" id="quiz-progress-text">第 1 / 5 題</div>
+                <div class="flex items-center gap-2 font-mono font-bold text-gray-600 bg-white/50 px-3 py-1 rounded-lg">
+                    <i data-lucide="timer" class="w-4 h-4 text-orange-500"></i>
+                    <span id="quiz-timer">00:00</span>
+                </div>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-8 overflow-hidden">
+                <div id="quiz-progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
+            </div>
+
+            <!-- 題目卡 -->
+            <div class="glass-card rounded-3xl p-8 mb-6 relative">
+                <div class="absolute -top-4 -left-4 bg-yellow-400 text-yellow-900 w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-lg transform -rotate-12">Q</div>
+                <h3 id="question-text" class="text-2xl font-bold mb-8 text-gray-800 leading-snug mt-2">題目內容</h3>
+                
+                <div id="options-container" class="space-y-4">
+                    <!-- 選項由 JS 生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 5. 關卡結算畫面 ==================== -->
+        <div id="screen-result" class="hidden glass-card rounded-3xl p-10 text-center max-w-lg mx-auto transform transition-all">
+            <div id="result-icon" class="text-7xl mb-4 floating">🎉</div>
+            <h2 id="result-title" class="text-4xl font-black mb-2 text-gray-800">關卡完成！</h2>
+            <p id="result-subtitle" class="text-gray-500 font-bold mb-8">太棒了，你已解鎖下一階段！</p>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
+                    <div class="text-green-500 text-sm font-bold mb-1">答對題數</div>
+                    <div id="result-correct" class="text-3xl font-black text-green-600">4</div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <div class="text-blue-500 text-sm font-bold mb-1">獲得分數</div>
+                    <div id="result-score" class="text-3xl font-black text-blue-600">+16</div>
+                </div>
+            </div>
+            
+            <button onclick="finishLevel()" class="btn-game w-full bg-blue-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg">
+                回到學習地圖
+            </button>
+        </div>
+
+        <!-- ==================== 6. 最終結算與上傳畫面 ==================== -->
+        <div id="screen-leaderboard" class="hidden glass-card rounded-3xl p-8 md:p-12 text-center">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-4xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-orange-500">專題任務總結算</h2>
+            
+            <div class="bg-white/60 p-6 rounded-2xl shadow-sm mb-8 inline-block text-left min-w-[250px]">
+                <h3 class="font-bold text-gray-500 border-b pb-2 mb-3">🕵️ 研究員資料</h3>
+                <div class="text-xl font-bold text-gray-800 mb-1" id="final-user">901 01 王小明</div>
+                <div class="grid grid-cols-2 gap-x-8 gap-y-2 mt-4">
+                    <div class="text-gray-600">總分數：</div>
+                    <div class="font-black text-blue-600 text-right text-xl" id="final-score">100</div>
+                    
+                    <div class="text-gray-600">總答對：</div>
+                    <div class="font-black text-green-600 text-right" id="final-correct">25 題</div>
+                    
+                    <div class="text-gray-600">總答錯：</div>
+                    <div class="font-black text-red-500 text-right" id="final-wrong">0 題</div>
+
+                    <div class="text-gray-600">總耗時：</div>
+                    <div class="font-black text-orange-500 text-right" id="final-time">0 秒</div>
+                </div>
+            </div>
+
+            <div class="space-y-4 max-w-md mx-auto">
+                <button onclick="uploadData()" class="btn-game w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg flex justify-center items-center gap-2">
+                    <i data-lucide="cloud-upload"></i> 上傳紀錄 (防作弊驗證)
+                </button>
+                <button onclick="switchScreen('screen-map')" class="btn-game w-full bg-gray-200 text-gray-700 font-bold text-lg py-3 rounded-xl hover:bg-gray-300">
+                    返回地圖
+                </button>
+                <button onclick="resetGame()" class="text-sm text-red-400 hover:text-red-600 underline mt-4 inline-block font-bold">
+                    清除紀錄並重新開始
+                </button>
+            </div>
+            
+            <!-- 模擬加密金鑰展示區 (供教學展示用) -->
+            <div class="mt-8 text-xs text-gray-400 font-mono text-left bg-gray-900/5 p-4 rounded-lg overflow-hidden">
+                <div class="font-bold mb-1 text-gray-500">🔒 系統安全狀態 (Teaching Only)</div>
+                <div id="security-token" class="break-all">Token: Waiting for generation...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript 邏輯 -->
+    <script>
+        // -------------------------
+        // 資料庫：關卡與題目 (25題)
+        // 答案使用 Base64 加密 (A=QQ==, B=Qg==, C=Qw==, D=RA==)
+        // -------------------------
+        const levelsData = [
+            {
+                id: 0,
+                title: "Phase 1：資料理解",
+                subtitle: "概念建立",
+                color: "from-blue-400 to-blue-600",
+                icon: "🧠",
+                teach: [
+                    "👉 資料無所不在：從心情、成績到購買紀錄都是資料。",
+                    "👉 數值 vs 非數值：能計算大小的是「數值資料」，像性別、血型是「類別/非數值資料」。",
+                    "👉 表格與紀錄：一次調查的一整列資料，我們稱為「一筆紀錄」。"
+                ],
+                questions: [
+                    { q: "下列哪個是資料？", opts: { A: "心情", B: "成績", C: "想法", D: "以上皆是" }, ans: "RA==" }, // D
+                    { q: "哪個是「數值資料」？", opts: { A: "血型", B: "性別", C: "考試分數", D: "姓名" }, ans: "Qw==" }, // C
+                    { q: "表格中的「一筆紀錄」通常代表什麼？", opts: { A: "一個獨立的數字", B: "一位受測者的所有資料", C: "整個圖表", D: "一個欄位名稱" }, ans: "Qg==" }, // B
+                    { q: "質性資料（非數值資料）通常用來描述什麼？", opts: { A: "特徵或類別", B: "身高", C: "體重", D: "溫度" }, ans: "QQ==" }, // A
+                    { q: "為了方便電腦處理，我們會將蒐集到的資料整理成什麼形式？", opts: { A: "散文形式", B: "純聲音檔", C: "結構化表格", D: "隨機文字" }, ans: "Qw==" } // C
+                ]
+            },
+            {
+                id: 1,
+                title: "Phase 2：資料來源",
+                subtitle: "哪裡找數據？",
+                color: "from-purple-400 to-purple-600",
+                icon: "🌍",
+                teach: [
+                    "👉 第一手資料：自己去發問卷、實地調查獲得的。",
+                    "👉 第二手資料：別人已經整理好的，例如政府資料開放平臺。",
+                    "👉 開放資料 (Open Data)：任何人都可以自由下載、使用、分享的資料。"
+                ],
+                questions: [
+                    { q: "「政府資料開放平臺」的網址特徵通常包含什麼？", opts: { A: ".gov.tw", B: ".com", C: ".edu", D: ".net" }, ans: "QQ==" }, // A
+                    { q: "下列何者屬於「開放資料」的特性？", opts: { A: "必須高價購買", B: "只有政府官員能用", C: "任何人都能自由下載與利用", D: "包含大量個人隱私" }, ans: "Qw==" }, // C
+                    { q: "如果想知道全校同學最喜歡的手遊，最適合的方法是？", opts: { A: "查維基百科", B: "自己設計問卷調查", C: "看新聞報導", D: "用猜的" }, ans: "Qg==" }, // B
+                    { q: "下列哪個「不是」常見的資料儲存格式？", opts: { A: "CSV", B: "JSON", C: "XML", D: "MP4 (影片檔)" }, ans: "RA==" }, // D
+                    { q: "關於「二手資料」，下列描述何者正確？", opts: { A: "是自己親自發問卷收集的", B: "是別人已經整理好的資料", C: "一定都是錯的", D: "絕對不能用來做報告" }, ans: "Qg==" } // B
+                ]
+            },
+            {
+                id: 2,
+                title: "Phase 3：資料蒐集",
+                subtitle: "問卷設計",
+                color: "from-orange-400 to-orange-600",
+                icon: "📝",
+                teach: [
+                    "👉 工具選擇：Google 表單是免費且強大的工具。",
+                    "👉 變數設計：問卷中的每一個問題，就是一個「變數」。",
+                    "👉 題型對應：想分類用「單選題」，想問時間/分數用「簡答題(限制數字)」。"
+                ],
+                questions: [
+                    { q: "Google表單的主要功能是什麼？", opts: { A: "修圖與剪輯", B: "收集資料與問卷調查", C: "撰寫長篇小說", D: "寫程式碼" }, ans: "Qg==" }, // B
+                    { q: "在問卷中，想讓填寫者只能從多個選項中選「一個」，要用哪種題型？", opts: { A: "核取方塊 (多選)", B: "段落簡答", C: "單選選擇題", D: "檔案上傳" }, ans: "Qw==" }, // C
+                    { q: "設計問卷時，如果要收集同學的「每天玩手機時間(小時)」，最適合的設定是？", opts: { A: "文字段落", B: "要求填寫數值的簡答題", C: "上傳照片", D: "日期選擇" }, ans: "Qg==" }, // B
+                    { q: "為了避免收到亂填的無效資料，設計問卷時可以怎麼做？", opts: { A: "設定必填與資料驗證(限制格式)", B: "題目出個一百題", C: "不給選項讓他們隨便打", D: "不要設定任何限制" }, ans: "QQ==" }, // A
+                    { q: "收齊 Google 表單回覆後，系統可以直接將資料轉換成什麼來繼續處理？", opts: { A: "Google 簡報", B: "Google 試算表", C: "Word 文件", D: "小畫家圖片" }, ans: "Qg==" } // B
+                ]
+            },
+            {
+                id: 3,
+                title: "Phase 4：資料整理",
+                subtitle: "數據清理與處理",
+                color: "from-green-400 to-green-600",
+                icon: "🧹",
+                teach: [
+                    "👉 資料清理：刪除空白、錯誤或不合理的資料（前處理）。",
+                    "👉 排序：依照數值大小（高到低）把資料重新排列。",
+                    "👉 篩選：只顯示符合條件的資料（例如：只看901班的）。"
+                ],
+                questions: [
+                    { q: "下列哪個是「資料前處理（清理）」的重要動作？", opts: { A: "把圖表顏色變漂亮", B: "找出並處理錯誤或空白的資料", C: "發布問卷連結", D: "寫結論文案" }, ans: "Qg==" }, // B
+                    { q: "在試算表中，想把全班成績從最高分排到最低分，要使用什麼功能？", opts: { A: "篩選", B: "排序", C: "尋找", D: "合併儲存格" }, ans: "Qg==" }, // B
+                    { q: "如果資料表中有一千筆資料，我只想看到「性別為女」的紀錄，該用什麼功能？", opts: { A: "排序", B: "刪除", C: "篩選", D: "複製" }, ans: "Qw==" }, // C
+                    { q: "「資料標準化」或計算標準分數的目的是什麼？", opts: { A: "讓檔案容量變小", B: "讓資料數量變多", C: "讓不同單位/尺度的資料可以互相比較", D: "讓字體大小統一" }, ans: "Qw==" }, // C
+                    { q: "把多個不同來源的資料表合併在一起，這稱為？", opts: { A: "資料加密", B: "資料備份", C: "資料整合", D: "資料壓縮" }, ans: "Qw==" } // C
+                ]
+            },
+            {
+                id: 4,
+                title: "Phase 5：資料視覺化",
+                subtitle: "讓數據說話",
+                color: "from-pink-400 to-pink-600",
+                icon: "📊",
+                teach: [
+                    "👉 折線圖：看趨勢變化（例如：歷年成績變化）。",
+                    "👉 雷達圖：看強弱分布與比較（例如：各科能力指標）。",
+                    "👉 結論三句話：我發現...、可能原因是...、我建議...！"
+                ],
+                questions: [
+                    { q: "哪種圖表最適合用來呈現「國中三年每次段考成績的進步趨勢」？", opts: { A: "圓餅圖", B: "雷達圖", C: "折線圖", D: "散佈圖" }, ans: "Qw==" }, // C
+                    { q: "如果要比較「星兒」與「阿顯」兩人在國、英、數、社、自五個科目的強弱分布，哪種圖最直觀？", opts: { A: "折線圖", B: "長條圖", C: "雷達圖", D: "圓餅圖" }, ans: "Qw==" }, // C
+                    { q: "哪種圖表最適合呈現「各縣市登革熱確診人數的分佈狀況」？", opts: { A: "地理圖 (地圖)", B: "折線圖", C: "樹狀圖", D: "雷達圖" }, ans: "QQ==" }, // A
+                    { q: "專題報告寫結論時的「三句話公式」，通常【不包含】哪一個？", opts: { A: "我發現...(數據事實)", B: "可能原因是...(分析推論)", C: "我建議...(行動方案)", D: "我覺得很無聊...(情緒發言)" }, ans: "RA==" }, // D
+                    { q: "圖表的「標題」與「座標軸標籤(X軸/Y軸)」為何非常重要？", opts: { A: "只是為了版面好看", B: "幫助讀者立刻看懂圖表代表的意義與單位", C: "是電腦軟體規定的", D: "可以增加檔案的大小" }, ans: "Qg==" } // B
+                ]
+            }
+        ];
+
+        // -------------------------
+        // 系統狀態變數
+        // -------------------------
+        let gameState = {
+            user: { class: '', seat: '', name: '' },
+            unlockedLevel: 0,
+            score: 0,
+            correct: 0,
+            wrong: 0,
+            totalTimeSeconds: 0
+        };
+
+        // 測驗進行中的狀態
+        let currentLevelIdx = 0;
+        let currentQIdx = 0;
+        let levelCorrect = 0;
+        let levelWrong = 0;
+        let levelTimer = null;
+        let levelSeconds = 0;
+
+        // 初始化
+        window.onload = () => {
+            lucide.createIcons();
+            loadGame();
+        };
+
+        // -------------------------
+        // UI 切換邏輯
+        // -------------------------
+        function switchScreen(screenId) {
+            ['screen-login', 'screen-map', 'screen-teach', 'screen-quiz', 'screen-result', 'screen-leaderboard'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // -------------------------
+        // 1. 登入邏輯
+        // -------------------------
+        function login() {
+            const c = document.getElementById('login-class').value;
+            const s = document.getElementById('login-seat').value;
+            const n = document.getElementById('login-name').value;
+
+            if (!c || !s || !n) {
+                Swal.fire({ icon: 'error', title: '資料不完整', text: '請輸入班級、座號與姓名！', confirmButtonColor: '#3b82f6' });
+                return;
+            }
+
+            gameState.user = { class: c, seat: s, name: n };
+            saveGame();
+            updateMapUI();
+            switchScreen('screen-map');
+            
+            Swal.fire({
+                icon: 'success',
+                title: '登入成功！',
+                text: `歡迎，小研究員 ${n}！`,
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+
+        // -------------------------
+        // 2. 地圖生成與更新
+        // -------------------------
+        function updateMapUI() {
+            document.getElementById('player-info').innerText = `${gameState.user.class}班 ${gameState.user.seat}號 ${gameState.user.name}`;
+            document.getElementById('player-score').innerText = gameState.score;
+
+            const container = document.getElementById('level-container');
+            container.innerHTML = '';
+
+            levelsData.forEach((lvl, idx) => {
+                const isUnlocked = idx <= gameState.unlockedLevel;
+                const statusIcon = isUnlocked ? (idx < gameState.unlockedLevel ? 'check-circle' : 'unlock') : 'lock';
+                const statusColor = isUnlocked ? (idx < gameState.unlockedLevel ? 'text-green-500' : 'text-blue-500') : 'text-gray-400';
+                
+                const card = document.createElement('div');
+                card.className = `level-card glass-card rounded-2xl p-6 ${isUnlocked ? 'cursor-pointer hover:-translate-y-2 transition-all duration-300' : 'locked'}`;
+                card.onclick = () => { if(isUnlocked) showTeach(idx); };
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${lvl.color} text-white flex items-center justify-center text-3xl shadow-lg">
+                            ${lvl.icon}
+                        </div>
+                        <i data-lucide="${statusIcon}" class="w-6 h-6 ${statusColor}"></i>
+                    </div>
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">任務 ${idx + 1}</div>
+                    <h3 class="text-xl font-black text-gray-800 mb-1">${lvl.title}</h3>
+                    <p class="text-sm font-bold text-gray-500">${lvl.subtitle}</p>
+                    ${isUnlocked && idx < gameState.unlockedLevel ? `<div class="mt-4 text-xs font-bold text-green-600 bg-green-100 py-1 px-3 rounded-full inline-block">已通關</div>` : ''}
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // -------------------------
+        // 3. 教學卡片邏輯
+        // -------------------------
+        function showTeach(idx) {
+            currentLevelIdx = idx;
+            const lvl = levelsData[idx];
+            
+            document.getElementById('teach-icon').innerText = lvl.icon;
+            document.getElementById('teach-title').innerText = lvl.title;
+            
+            const ul = document.getElementById('teach-content');
+            ul.innerHTML = lvl.teach.map(t => `<li class="border-b border-gray-100 pb-2 last:border-0">${t}</li>`).join('');
+            
+            switchScreen('screen-teach');
+        }
+
+        // -------------------------
+        // 4. 測驗邏輯
+        // -------------------------
+        function startQuiz() {
+            currentQIdx = 0;
+            levelCorrect = 0;
+            levelWrong = 0;
+            levelSeconds = 0;
+            
+            switchScreen('screen-quiz');
+            renderQuestion();
+            
+            // 計時器
+            clearInterval(levelTimer);
+            document.getElementById('quiz-timer').innerText = "00:00";
+            levelTimer = setInterval(() => {
+                levelSeconds++;
+                gameState.totalTimeSeconds++;
+                const m = String(Math.floor(levelSeconds / 60)).padStart(2, '0');
+                const s = String(levelSeconds % 60).padStart(2, '0');
+                document.getElementById('quiz-timer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            const qData = levelsData[currentLevelIdx].questions[currentQIdx];
+            const totalQ = levelsData[currentLevelIdx].questions.length;
+            
+            // 更新進度
+            document.getElementById('quiz-progress-text').innerText = `第 ${currentQIdx + 1} / ${totalQ} 題`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQIdx + 1) / totalQ) * 100}%`;
+            
+            // 填入題目
+            document.getElementById('question-text').innerText = qData.q;
+            
+            // 生成選項按鈕 (加入 A, B, C, D 標籤)
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
+            Object.keys(qData.opts).forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white p-4 rounded-xl shadow-sm mb-3 flex items-center gap-4 transition-all duration-200 font-bold text-gray-700 text-lg";
+                btn.onclick = () => checkAnswer(key);
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center font-black">${key}</span>
+                    <span>${qData.opts[key]}</span>
+                `;
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedKey) {
+            const qData = levelsData[currentLevelIdx].questions[currentQIdx];
+            
+            // 防作弊：將標準答案解碼後比對
+            const correctKey = atob(qData.ans);
+            
+            if (selectedKey === correctKey) {
+                // 答對
+                levelCorrect++;
+                gameState.correct++;
+                gameState.score += 4; // 每題4分
+                Swal.fire({
+                    icon: 'success',
+                    title: '答對了！',
+                    text: '觀念非常正確 👍',
+                    timer: 1200,
+                    showConfirmButton: false,
+                    backdrop: `rgba(0,0,123,0.4)`
+                }).then(nextQuestion);
+            } else {
+                // 答錯
+                levelWrong++;
+                gameState.wrong++;
+                Swal.fire({
+                    icon: 'error',
+                    title: '喔不，答錯了！',
+                    text: `正確答案是：${correctKey}`,
+                    confirmButtonText: '記起來了',
+                    confirmButtonColor: '#3b82f6'
+                }).then(nextQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            currentQIdx++;
+            if (currentQIdx < levelsData[currentLevelIdx].questions.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // -------------------------
+        // 5. 單關結算
+        // -------------------------
+        function showResult() {
+            clearInterval(levelTimer);
+            
+            // 處理關卡解鎖
+            if (gameState.unlockedLevel === currentLevelIdx) {
+                gameState.unlockedLevel++;
+            }
+            saveGame();
+            
+            const totalQ = levelsData[currentLevelIdx].questions.length;
+            
+            document.getElementById('result-correct').innerText = `${levelCorrect} / ${totalQ}`;
+            document.getElementById('result-score').innerText = `+${levelCorrect * 4}`;
+            
+            if (levelCorrect === totalQ) {
+                document.getElementById('result-icon').innerText = "🏆";
+                document.getElementById('result-title').innerText = "完美通關！";
+                document.getElementById('result-title').className = "text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500";
+            } else if (levelCorrect >= totalQ * 0.6) {
+                document.getElementById('result-icon').innerText = "🎉";
+                document.getElementById('result-title').innerText = "順利過關！";
+                document.getElementById('result-title').className = "text-4xl font-black mb-2 text-blue-600";
+            } else {
+                document.getElementById('result-icon').innerText = "💪";
+                document.getElementById('result-title').innerText = "再接再厲！";
+                document.getElementById('result-title').className = "text-4xl font-black mb-2 text-gray-700";
+            }
+            
+            switchScreen('screen-result');
+        }
+
+        function finishLevel() {
+            updateMapUI();
+            switchScreen('screen-map');
+            if(gameState.unlockedLevel >= levelsData.length){
+                Swal.fire({
+                    icon: 'success',
+                    title: '全破關啦！',
+                    text: '你已完成所有量化專題訓練，趕快點擊「結算成績」吧！',
+                    confirmButtonText: '前往結算',
+                    confirmButtonColor: '#f59e0b'
+                }).then(() => {
+                    showLeaderboard();
+                });
+            }
+        }
+
+        // -------------------------
+        // 6. 總結算與防作弊上傳 (模擬 GAS)
+        // -------------------------
+        function showLeaderboard() {
+            document.getElementById('final-user').innerText = `${gameState.user.class}班 ${gameState.user.seat}號 ${gameState.user.name}`;
+            document.getElementById('final-score').innerText = gameState.score;
+            document.getElementById('final-correct').innerText = `${gameState.correct} 題`;
+            document.getElementById('final-wrong').innerText = `${gameState.wrong} 題`;
+            document.getElementById('final-time').innerText = `${gameState.totalTimeSeconds} 秒`;
+            
+            // 產生防作弊 Token (示範：Base64 包裝 user + score + salt)
+            const salt = "JHS_DATA_PROJ_2024";
+            const rawToken = `${gameState.user.name}_${gameState.score}_${gameState.correct}_${salt}`;
+            const encryptToken = btoa(encodeURIComponent(rawToken));
+            document.getElementById('security-token').innerText = `Token:\n${encryptToken}`;
+
+            switchScreen('screen-leaderboard');
+        }
+
+        function uploadData() {
+            // 這裡準備串接 Google Apps Script
+            // 教師端可在 GAS 寫 doPost 接收以下 JSON
+            
+            const payload = {
+                class: gameState.user.class,
+                seat: gameState.user.seat,
+                name: gameState.user.name,
+                score: gameState.score,
+                correct: gameState.correct,
+                wrong: gameState.wrong,
+                time: gameState.totalTimeSeconds,
+                token: btoa(encodeURIComponent(`${gameState.user.name}_${gameState.score}_JHS_DATA_PROJ_2024`)) // 防作弊驗證碼
+            };
+
+            console.log("準備上傳的資料包：", payload);
+
+            // 模擬上傳動畫
+            Swal.fire({
+                title: '上傳資料中...',
+                html: '正在與 Google 試算表連線 <br><br> <b>防作弊驗證中...</b>',
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            }).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: '上傳成功！',
+                    text: '你的專題研究紀錄已安全儲存。',
+                    confirmButtonColor: '#10b981'
+                });
+            });
+            
+            /* 實際串接語法範例：
+            fetch('https://script.google.com/macros/s/AKfycbxRoYfM5gEsjUerK2P2o8s13IXFuiRcl88AAyz3AZIm8V248j-X0D71uNzLBqVS9_7FYQ/exec', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            }).then(res => ...);
+            */
+        }
+
+        // -------------------------
+        // 系統存檔 (localStorage)
+        // -------------------------
+        function saveGame() {
+            localStorage.setItem('DataProjGameData', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('DataProjGameData');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                if (gameState.user.name) {
+                    updateMapUI();
+                    switchScreen('screen-map');
+                    return;
+                }
+            }
+            switchScreen('screen-login');
+        }
+
+        function resetGame() {
+            Swal.fire({
+                title: '確定要清除所有紀錄？',
+                text: "你的分數和通關進度都會消失喔！",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: '是的，重新開始',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('DataProjGameData');
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

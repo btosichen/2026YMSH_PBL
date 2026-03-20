@@ -105,6 +105,11 @@
                 <button onclick="login()" class="btn-game w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg flex justify-center items-center gap-2">
                     <i data-lucide="gamepad-2"></i> 開始挑戰
                 </button>
+
+                <!-- 新增：學習記錄連結按鈕 -->
+                <a href="https://docs.google.com/spreadsheets/d/1z8eXcBYYYXxYtKShKeOLrRhSQ3Fs77QPcnQQJnwS5kI/edit?usp=sharing" target="_blank" class="btn-game w-full mt-3 bg-white text-blue-600 border-2 border-blue-200 font-bold text-lg py-3 rounded-xl shadow-sm flex justify-center items-center gap-2 hover:bg-blue-50 transition-colors">
+                    <i data-lucide="table"></i> 查看學習記錄
+                </a>
             </div>
         </div>
 
@@ -639,9 +644,7 @@
         }
 
         function uploadData() {
-            // 這裡準備串接 Google Apps Script
-            // 教師端可在 GAS 寫 doPost 接收以下 JSON
-            
+            // 準備傳送給 Google Apps Script 的 JSON 資料
             const payload = {
                 class: gameState.user.class,
                 seat: gameState.user.seat,
@@ -655,30 +658,50 @@
 
             console.log("準備上傳的資料包：", payload);
 
-            // 模擬上傳動畫
+            // 顯示上傳中的動畫 (不自動關閉，直到收到伺服器回應)
             Swal.fire({
                 title: '上傳資料中...',
-                html: '正在與 Google 試算表連線 <br><br> <b>防作弊驗證中...</b>',
-                timer: 2000,
-                timerProgressBar: true,
+                html: '正在與 Google 試算表連線 <br><br> <b>防作弊驗證與傳輸中...</b>',
+                allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
-            }).then(() => {
+            });
+
+            // 實際串接你的 GAS API 網址
+            const gasUrl = 'https://script.google.com/macros/s/AKfycbxRoYfM5gEsjUerK2P2o8s13IXFuiRcl88AAyz3AZIm8V248j-X0D71uNzLBqVS9_7FYQ/exec';
+            
+            // 使用 fetch 將資料以 POST 傳送
+            // 設定 text/plain 是一種常見技巧，可避免複雜的跨域 (CORS) 預檢請求阻擋
+            fetch(gasUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if(result.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '上傳成功！',
+                        text: '你的專題研究紀錄已安全儲存至試算表。',
+                        confirmButtonColor: '#10b981'
+                    });
+                } else {
+                    throw new Error(result.message || '伺服器回傳錯誤');
+                }
+            })
+            .catch(error => {
+                console.error('上傳失敗:', error);
                 Swal.fire({
-                    icon: 'success',
-                    title: '上傳成功！',
-                    text: '你的專題研究紀錄已安全儲存。',
-                    confirmButtonColor: '#10b981'
+                    icon: 'error',
+                    title: '上傳失敗',
+                    text: '無法連線到試算表，請檢查網路連線或稍後再試！',
+                    confirmButtonColor: '#ef4444'
                 });
             });
-            
-            //實際串接語法範例：
-            fetch('https://script.google.com/macros/s/AKfycbxRoYfM5gEsjUerK2P2o8s13IXFuiRcl88AAyz3AZIm8V248j-X0D71uNzLBqVS9_7FYQ/exec', {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            }).then(res => ...);
-            
         }
 
         // -------------------------

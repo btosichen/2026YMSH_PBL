@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>量化問卷調查製作 | 教學簡報版</title>
+    <title>量化專題教學平台 | 教學簡報版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -40,7 +40,7 @@
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <i data-lucide="database" class="text-indigo-600"></i>
-                <h1 class="font-bold text-xl hidden sm:block">九年級量化問卷調查製作 <span class="text-indigo-500 text-sm ml-2" id="mode-badge">👨‍🏫 教師模式</span></h1>
+                <h1 class="font-bold text-xl hidden sm:block">九年級量化專題 <span class="text-indigo-500 text-sm ml-2" id="mode-badge">👨‍🏫 教師模式</span></h1>
             </div>
             <div class="flex items-center gap-4">
                 <button onclick="toggleMode()" id="mode-toggle-btn" class="text-sm px-3 py-1.5 rounded-full border border-indigo-200 hover:bg-indigo-50 transition-colors font-medium flex items-center gap-1">
@@ -67,8 +67,24 @@
                     <i data-lucide="smartphone" class="w-10 h-10"></i>
                 </div>
                 <h2 class="text-4xl font-black mb-4 text-gradient">你每天都在產生數據，但你會用嗎？</h2>
-                <p class="text-xl text-gray-600 mb-8">讓我們來做個全班小調查！</p>
+                <p class="text-xl text-gray-600 mb-6">讓我們來做個全班小調查！</p>
                 
+                <!-- 新增：可愛的外部連結按鈕區 -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <!-- 按鈕 1: 範例 -->
+                    <a href="https://btosichen.github.io/2026YMSH_PBL/example.html" target="_blank" rel="noopener noreferrer"
+                       class="group inline-flex items-center gap-2 px-6 py-3 bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-md border border-amber-200">
+                        <span class="text-2xl group-hover:animate-bounce">🌟</span>
+                        <span>範例</span>
+                    </a>
+                    <!-- 按鈕 2: Google表單製作 -->
+                    <a href="https://btosichen.github.io/2026YMSH_PBL/example04.html" target="_blank" rel="noopener noreferrer"
+                       class="group inline-flex items-center gap-2 px-6 py-3 bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-md border border-sky-200">
+                        <span class="text-2xl group-hover:animate-bounce">🪄</span>
+                        <span>Google表單製作</span>
+                    </a>
+                </div>
+
                 <div class="max-w-md mx-auto bg-gray-50 p-6 rounded-2xl border border-gray-100">
                     <label class="block text-lg font-bold mb-4">你今天滑手機大約幾小時？</label>
                     <div class="flex gap-2">

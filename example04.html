@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>讀書時間 vs 成績專題</title>
+<title>讀書時間 vs 成績專題（完整版）</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,46 +22,93 @@ body {
 
 <body class="p-6">
 
-<div class="max-w-4xl mx-auto">
+<div class="max-w-5xl mx-auto">
 
 <!-- 標題 -->
 <div class="card p-6 rounded-2xl mb-6 text-center">
   <h1 class="text-3xl font-black text-blue-600">📚 讀書時間 vs 成績</h1>
-  <p class="text-gray-600">用數據找出答案 🔍</p>
+  <p class="text-gray-600">量化專題完整實作 🚀</p>
 </div>
 
-<!-- Step流程 -->
+<!-- 專題流程 -->
 <div class="card p-6 rounded-2xl mb-6">
   <h2 class="font-bold text-xl mb-3">🚀 專題流程</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-    <div class="bg-blue-100 p-3 rounded-xl">1️⃣ 收集資料</div>
-    <div class="bg-purple-100 p-3 rounded-xl">2️⃣ 整理資料</div>
-    <div class="bg-green-100 p-3 rounded-xl">3️⃣ 分析資料</div>
-    <div class="bg-pink-100 p-3 rounded-xl">4️⃣ 寫結論</div>
+    <div class="bg-blue-100 p-3 rounded-xl">1️⃣ 問卷設計</div>
+    <div class="bg-purple-100 p-3 rounded-xl">2️⃣ 資料收集</div>
+    <div class="bg-green-100 p-3 rounded-xl">3️⃣ 資料分析</div>
+    <div class="bg-pink-100 p-3 rounded-xl">4️⃣ 結論</div>
   </div>
 </div>
 
-<!-- 輸入資料 -->
+<!-- Google表單教學 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <h2 class="font-bold text-xl mb-4">📝 輸入你的資料</h2>
+  <h2 class="font-bold text-xl mb-4">📋 Step 1：設計 Google 表單</h2>
 
-  <div class="grid md:grid-cols-3 gap-4">
+  <div class="space-y-4">
+
+    <div class="bg-blue-50 p-4 rounded-xl">
+      <b>🎯 表單標題：</b>讀書時間 vs 成績調查
+    </div>
+
+    <div class="bg-green-50 p-4 rounded-xl">
+      <b>📝 題目設計：</b>
+      <ul class="list-disc ml-5 mt-2">
+        <li>每日讀書時間（數字）</li>
+        <li>考試成績（數字）</li>
+        <li>手機使用時間（數字）</li>
+        <li>專心程度（1~5）</li>
+      </ul>
+    </div>
+
+    <div class="bg-yellow-50 p-4 rounded-xl">
+      <b>⚠️ 設計重點：</b>
+      <ul class="list-disc ml-5 mt-2">
+        <li>一定要用數字🔥</li>
+        <li>每題=一個變數</li>
+        <li>避免文字答案</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- 模擬表單 -->
+<div class="card p-6 rounded-2xl mb-6">
+  <h2 class="font-bold text-xl mb-4">🧪 Step 2：模擬填寫</h2>
+
+  <div class="grid md:grid-cols-2 gap-4">
+
     <input id="study" type="number" placeholder="讀書時間 (小時)" class="p-3 rounded-xl border">
-    <input id="score" type="number" placeholder="成績 (0~100)" class="p-3 rounded-xl border">
-    <button onclick="addData()" class="bg-blue-500 text-white rounded-xl font-bold">➕ 加入</button>
+    <input id="score" type="number" placeholder="成績" class="p-3 rounded-xl border">
+    <input id="phone" type="number" placeholder="手機時間 (小時)" class="p-3 rounded-xl border">
+
+    <select id="focus" class="p-3 rounded-xl border">
+      <option value="">專心程度</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
   </div>
+
+  <button onclick="addData()" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-xl font-bold">
+    ➕ 加入資料
+  </button>
 </div>
 
-<!-- 資料表 -->
+<!-- 資料顯示 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <h2 class="font-bold text-xl mb-3">📊 目前資料</h2>
+  <h2 class="font-bold text-xl mb-3">📊 資料</h2>
   <div id="dataList"></div>
 </div>
 
-<!-- 分析按鈕 -->
+<!-- 分析 -->
 <div class="text-center mb-6">
   <button onclick="analyze()" class="bg-green-500 text-white px-6 py-3 rounded-xl font-bold">
-    🔍 開始分析
+    🔍 分析資料
   </button>
 </div>
 
@@ -72,8 +119,8 @@ body {
 
 <!-- 結論 -->
 <div class="card p-6 rounded-2xl">
-  <h2 class="font-bold text-xl mb-3">🧠 AI結論</h2>
-  <div id="result" class="text-gray-700"></div>
+  <h2 class="font-bold text-xl mb-3">🧠 自動結論</h2>
+  <div id="result"></div>
 </div>
 
 </div>
@@ -83,31 +130,28 @@ body {
 let data = [];
 
 function addData(){
-  let s = parseFloat(document.getElementById("study").value);
-  let sc = parseFloat(document.getElementById("score").value);
+  let s = parseFloat(study.value);
+  let sc = parseFloat(score.value);
+  let p = parseFloat(phone.value);
+  let f = parseFloat(focus.value);
 
   if(isNaN(s)||isNaN(sc)) return alert("請輸入數值");
 
-  data.push({study:s,score:sc});
+  data.push({study:s,score:sc,phone:p,focus:f});
   render();
 }
 
 function render(){
   let html="";
   data.forEach(d=>{
-    html+=`<div>${d.study} 小時 → ${d.score} 分</div>`;
+    html+=`<div>${d.study}小時 → ${d.score}分</div>`;
   });
-  document.getElementById("dataList").innerHTML=html;
+  dataList.innerHTML=html;
 }
 
 function analyze(){
 
-  let groups = {
-    "0-1":[],
-    "1-2":[],
-    "2-3":[],
-    "3+":[],
-  };
+  let groups={"0-1":[],"1-2":[],"2-3":[],"3+":[]} ;
 
   data.forEach(d=>{
     if(d.study<1) groups["0-1"].push(d.score);
@@ -116,13 +160,12 @@ function analyze(){
     else groups["3+"].push(d.score);
   });
 
-  let labels=[];
-  let values=[];
+  let labels=[],values=[];
 
-  for(let key in groups){
-    if(groups[key].length>0){
-      let avg = groups[key].reduce((a,b)=>a+b,0)/groups[key].length;
-      labels.push(key);
+  for(let k in groups){
+    if(groups[k].length){
+      let avg=groups[k].reduce((a,b)=>a+b)/groups[k].length;
+      labels.push(k);
       values.push(avg.toFixed(1));
     }
   }
@@ -132,8 +175,7 @@ function analyze(){
 }
 
 function drawChart(labels,values){
-
-  new Chart(document.getElementById("chart"),{
+  new Chart(chart,{
     type:"line",
     data:{
       labels:labels,
@@ -146,13 +188,12 @@ function drawChart(labels,values){
 }
 
 function makeConclusion(values){
+  let trend = values[values.length-1] > values[0] ? "上升" : "沒有明顯提升";
 
-  let trend = values[values.length-1] > values[0] ? "上升" : "無明顯提升";
-
-  document.getElementById("result").innerHTML = `
-  1️⃣ 我發現：讀書時間與成績呈現「${trend}趨勢」。<br>
-  2️⃣ 可能原因：讀書時間增加，複習更完整。<br>
-  3️⃣ 我的建議：每天至少讀書 2 小時效果較好。
+  result.innerHTML = `
+  1️⃣ 我發現：成績呈現${trend}趨勢<br>
+  2️⃣ 可能原因：讀書時間影響學習<br>
+  3️⃣ 建議：每天至少讀書2小時
   `;
 }
 

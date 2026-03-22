@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>讀書時間 vs 成績專題（完整版）</title>
+<title>讀書時間 vs 成績｜Google表單教學</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
@@ -27,177 +26,124 @@ body {
 <!-- 標題 -->
 <div class="card p-6 rounded-2xl mb-6 text-center">
   <h1 class="text-3xl font-black text-blue-600">📚 讀書時間 vs 成績</h1>
-  <p class="text-gray-600">量化專題完整實作 🚀</p>
+  <p class="text-gray-600">Google 表單問卷設計教學</p>
 </div>
 
-<!-- 專題流程 -->
+<!-- 專題目標 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <h2 class="font-bold text-xl mb-3">🚀 專題流程</h2>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-    <div class="bg-blue-100 p-3 rounded-xl">1️⃣ 問卷設計</div>
-    <div class="bg-purple-100 p-3 rounded-xl">2️⃣ 資料收集</div>
-    <div class="bg-green-100 p-3 rounded-xl">3️⃣ 資料分析</div>
-    <div class="bg-pink-100 p-3 rounded-xl">4️⃣ 結論</div>
-  </div>
+  <h2 class="font-bold text-xl mb-3">🎯 專題目標</h2>
+  <p>
+    本專題要研究：「讀書時間是否影響考試成績？」<br>
+    我們將透過 Google 表單收集資料，再進行分析。
+  </p>
 </div>
 
-<!-- Google表單教學 -->
+<!-- Step 1 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <h2 class="font-bold text-xl mb-4">📋 Step 1：設計 Google 表單</h2>
+  <h2 class="font-bold text-xl mb-4">🪜 Step 1：建立 Google 表單</h2>
+
+  <ol class="list-decimal ml-5 space-y-2">
+    <li>打開 Google（搜尋：Google 表單）</li>
+    <li>點擊「前往 Google 表單」</li>
+    <li>點選「空白表單」</li>
+    <li>輸入表單名稱：<b>讀書時間 vs 成績調查</b></li>
+  </ol>
+</div>
+
+<!-- Step 2 -->
+<div class="card p-6 rounded-2xl mb-6">
+  <h2 class="font-bold text-xl mb-4">📝 Step 2：設計問卷題目</h2>
 
   <div class="space-y-4">
 
     <div class="bg-blue-50 p-4 rounded-xl">
-      <b>🎯 表單標題：</b>讀書時間 vs 成績調查
+      <b>題目1：每日讀書時間</b><br>
+      👉 題型：簡答<br>
+      👉 設定：點右下角「⋮」→ 選擇「回應驗證」→ 設定為「數字」
     </div>
 
     <div class="bg-green-50 p-4 rounded-xl">
-      <b>📝 題目設計：</b>
-      <ul class="list-disc ml-5 mt-2">
-        <li>每日讀書時間（數字）</li>
-        <li>考試成績（數字）</li>
-        <li>手機使用時間（數字）</li>
-        <li>專心程度（1~5）</li>
-      </ul>
+      <b>題目2：最近一次考試成績</b><br>
+      👉 題型：簡答<br>
+      👉 設定：限制數字（0~100）
     </div>
 
-    <div class="bg-yellow-50 p-4 rounded-xl">
-      <b>⚠️ 設計重點：</b>
-      <ul class="list-disc ml-5 mt-2">
-        <li>一定要用數字🔥</li>
-        <li>每題=一個變數</li>
-        <li>避免文字答案</li>
-      </ul>
+    <div class="bg-purple-50 p-4 rounded-xl">
+      <b>題目3：每日手機使用時間</b><br>
+      👉 題型：簡答<br>
+      👉 設定：數字
+    </div>
+
+    <div class="bg-pink-50 p-4 rounded-xl">
+      <b>題目4：讀書專心程度</b><br>
+      👉 題型：線性刻度<br>
+      👉 設定：1～5（1=不專心，5=非常專心）
     </div>
 
   </div>
 </div>
 
-<!-- 模擬表單 -->
+<!-- Step 3 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <h2 class="font-bold text-xl mb-4">🧪 Step 2：模擬填寫</h2>
+  <h2 class="font-bold text-xl mb-4">⚙️ Step 3：表單設定</h2>
 
-  <div class="grid md:grid-cols-2 gap-4">
-
-    <input id="study" type="number" placeholder="讀書時間 (小時)" class="p-3 rounded-xl border">
-    <input id="score" type="number" placeholder="成績" class="p-3 rounded-xl border">
-    <input id="phone" type="number" placeholder="手機時間 (小時)" class="p-3 rounded-xl border">
-
-    <select id="focus" class="p-3 rounded-xl border">
-      <option value="">專心程度</option>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-    </select>
-
-  </div>
-
-  <button onclick="addData()" class="mt-4 bg-blue-500 text-white px-6 py-2 rounded-xl font-bold">
-    ➕ 加入資料
-  </button>
+  <ul class="list-disc ml-5 space-y-2">
+    <li>點擊右上角「設定」⚙️</li>
+    <li>關閉「收集電子郵件」（避免隱私問題）</li>
+    <li>可開啟「限制每人1次回應」（依需求）</li>
+    <li>點擊「儲存」</li>
+  </ul>
 </div>
 
-<!-- 資料顯示 -->
+<!-- Step 4 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <h2 class="font-bold text-xl mb-3">📊 資料</h2>
-  <div id="dataList"></div>
+  <h2 class="font-bold text-xl mb-4">📤 Step 4：發送問卷</h2>
+
+  <ul class="list-disc ml-5 space-y-2">
+    <li>點擊右上角「傳送」</li>
+    <li>點選「連結」圖示 🔗</li>
+    <li>點擊「縮短網址」</li>
+    <li>複製連結並分享給同學</li>
+  </ul>
 </div>
 
-<!-- 分析 -->
-<div class="text-center mb-6">
-  <button onclick="analyze()" class="bg-green-500 text-white px-6 py-3 rounded-xl font-bold">
-    🔍 分析資料
-  </button>
-</div>
-
-<!-- 圖表 -->
+<!-- Step 5 -->
 <div class="card p-6 rounded-2xl mb-6">
-  <canvas id="chart"></canvas>
+  <h2 class="font-bold text-xl mb-4">📊 Step 5：查看資料</h2>
+
+  <ul class="list-disc ml-5 space-y-2">
+    <li>進入表單後，點選「回應」</li>
+    <li>點擊綠色「試算表」圖示</li>
+    <li>建立 Google 試算表</li>
+    <li>所有資料會自動整理成表格</li>
+  </ul>
 </div>
 
-<!-- 結論 -->
+<!-- Step 6 -->
+<div class="card p-6 rounded-2xl mb-6">
+  <h2 class="font-bold text-xl mb-4">📈 Step 6：資料分析（概念）</h2>
+
+  <ul class="list-disc ml-5 space-y-2">
+    <li>依讀書時間進行分組（0~1、1~2、2~3、3+）</li>
+    <li>計算每組平均成績</li>
+    <li>觀察是否有「讀越多分數越高」的趨勢</li>
+  </ul>
+</div>
+
+<!-- Step 7 -->
 <div class="card p-6 rounded-2xl">
-  <h2 class="font-bold text-xl mb-3">🧠 自動結論</h2>
-  <div id="result"></div>
+  <h2 class="font-bold text-xl mb-4">🧠 Step 7：寫結論</h2>
+
+  <div class="bg-yellow-50 p-4 rounded-xl">
+    <b>三句話公式：</b><br><br>
+
+    1️⃣ 我發現：__________<br>
+    2️⃣ 可能原因：__________<br>
+    3️⃣ 我的建議：__________
+  </div>
 </div>
 
 </div>
-
-<script>
-
-let data = [];
-
-function addData(){
-  let s = parseFloat(study.value);
-  let sc = parseFloat(score.value);
-  let p = parseFloat(phone.value);
-  let f = parseFloat(focus.value);
-
-  if(isNaN(s)||isNaN(sc)) return alert("請輸入數值");
-
-  data.push({study:s,score:sc,phone:p,focus:f});
-  render();
-}
-
-function render(){
-  let html="";
-  data.forEach(d=>{
-    html+=`<div>${d.study}小時 → ${d.score}分</div>`;
-  });
-  dataList.innerHTML=html;
-}
-
-function analyze(){
-
-  let groups={"0-1":[],"1-2":[],"2-3":[],"3+":[]} ;
-
-  data.forEach(d=>{
-    if(d.study<1) groups["0-1"].push(d.score);
-    else if(d.study<2) groups["1-2"].push(d.score);
-    else if(d.study<3) groups["2-3"].push(d.score);
-    else groups["3+"].push(d.score);
-  });
-
-  let labels=[],values=[];
-
-  for(let k in groups){
-    if(groups[k].length){
-      let avg=groups[k].reduce((a,b)=>a+b)/groups[k].length;
-      labels.push(k);
-      values.push(avg.toFixed(1));
-    }
-  }
-
-  drawChart(labels,values);
-  makeConclusion(values);
-}
-
-function drawChart(labels,values){
-  new Chart(chart,{
-    type:"line",
-    data:{
-      labels:labels,
-      datasets:[{
-        label:"平均成績",
-        data:values
-      }]
-    }
-  });
-}
-
-function makeConclusion(values){
-  let trend = values[values.length-1] > values[0] ? "上升" : "沒有明顯提升";
-
-  result.innerHTML = `
-  1️⃣ 我發現：成績呈現${trend}趨勢<br>
-  2️⃣ 可能原因：讀書時間影響學習<br>
-  3️⃣ 建議：每天至少讀書2小時
-  `;
-}
-
-</script>
 
 </body>
 </html>
